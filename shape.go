@@ -1,7 +1,13 @@
 package main
 
-type Shape [4][4]byte
-type ShapeRotations [4]Shape
+const (
+	ShapeWidth         = 4
+	ShapeHeight        = 4
+	ShapeRotationCount = 4
+)
+
+type Shape [ShapeWidth][ShapeHeight]byte
+type ShapeRotations [ShapeRotationCount]Shape
 
 var (
 	I = ShapeRotations{
@@ -186,4 +192,6 @@ var (
 			{0, 0, 0, 0},
 		},
 	}
+
+	Shapes = []ShapeRotations{L, O, S, T, J, I, Z}
 )
