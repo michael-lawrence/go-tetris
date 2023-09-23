@@ -27,13 +27,13 @@ func (game *Game) PlaceTetrimino() {
 func (game *Game) Update() error {
 	tetrimino := &game.State.Tetrimino
 
-	if ebiten.IsKeyPressed(ebiten.KeyLeft) {
+	if ebiten.IsKeyPressed(ebiten.KeyLeft) && tetrimino.CanMoveLeft(game) {
 		tetrimino.Left()
-	} else if ebiten.IsKeyPressed(ebiten.KeyRight) {
+	} else if ebiten.IsKeyPressed(ebiten.KeyRight) && tetrimino.CanMoveRight(game) {
 		tetrimino.Right()
 	} else if ebiten.IsKeyPressed(ebiten.KeySpace) {
 		tetrimino.Rotate()
-	} else if ebiten.IsKeyPressed(ebiten.KeyDown) {
+	} else if ebiten.IsKeyPressed(ebiten.KeyDown) && tetrimino.CanMoveDown(game) {
 		tetrimino.Down()
 	} else if ebiten.IsKeyPressed(ebiten.KeyUp) {
 		// @todo Instant drop

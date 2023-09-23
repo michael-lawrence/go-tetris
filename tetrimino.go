@@ -69,7 +69,31 @@ func (t *Tetrimino) DoToBlocks(game *Game, fn blockFn) bool {
 	return ok
 }
 
-func (t *Tetrimino) CanMoveDown(game *Game) (isOK bool) {
+func (t *Tetrimino) CanMoveLeft(game *Game) bool {
+	board := &game.State.Board
+	position := &t.Position
+
+	return t.DoToBlocks(game, func(game *Game, x, y int) bool {
+		blockX := position.X + x
+		blockY := position.Y + y
+
+		return blockX > 0 && !board.IsOccupied(blockX-1, blockY)
+	})
+}
+
+func (t *Tetrimino) CanMoveRight(game *Game) bool {
+	board := &game.State.Board
+	position := &t.Position
+
+	return t.DoToBlocks(game, func(game *Game, x, y int) bool {
+		blockX := position.X + x
+		blockY := position.Y + y
+
+		return blockX < BoardWidth-1 && !board.IsOccupied(blockX+1, blockY)
+	})
+}
+
+func (t *Tetrimino) CanMoveDown(game *Game) bool {
 	board := &game.State.Board
 	position := &t.Position
 
