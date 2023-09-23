@@ -41,7 +41,7 @@ func (game *Game) Update() error {
 
 	tetrimino.Down()
 
-	if !tetrimino.CanDrop(game) {
+	if !tetrimino.CanMoveDown(game) {
 		game.PlaceTetrimino()
 		tetrimino.Reset()
 	}

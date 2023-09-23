@@ -69,7 +69,7 @@ func (t *Tetrimino) DoToBlocks(game *Game, fn blockFn) bool {
 	return ok
 }
 
-func (t *Tetrimino) CanDrop(game *Game) (isOK bool) {
+func (t *Tetrimino) CanMoveDown(game *Game) (isOK bool) {
 	board := &game.State.Board
 	position := &t.Position
 
