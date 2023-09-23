@@ -47,10 +47,11 @@ func (t *Tetrimino) IsOccupied(x, y int) bool {
 	return shape[x][y] == 1
 }
 
-type blockFn func(game *Game, x, y int) bool
+type blockFn func(game *Game, x, y, blockX, blockY int) bool
 
 func (t *Tetrimino) DoToBlocks(game *Game, fn blockFn) bool {
 	ok := true
+	position := &t.Position
 
 	for x := 0; x < ShapeWidth; x++ {
 		for y := 0; y < ShapeHeight; y++ {
@@ -58,7 +59,10 @@ func (t *Tetrimino) DoToBlocks(game *Game, fn blockFn) bool {
 				continue
 			}
 
-			result := fn(game, x, y)
+			blockX := x + position.X
+			blockY := y + position.Y
+
+			result := fn(game, x, y, blockX, blockY)
 
 			if !result {
 				ok = false
@@ -71,36 +75,24 @@ func (t *Tetrimino) DoToBlocks(game *Game, fn blockFn) bool {
 
 func (t *Tetrimino) CanMoveLeft(game *Game) bool {
 	board := &game.State.Board
-	position := &t.Position
 
-	return t.DoToBlocks(game, func(game *Game, x, y int) bool {
-		blockX := position.X + x
-		blockY := position.Y + y
-
+	return t.DoToBlocks(game, func(game *Game, x, y, blockX, blockY int) bool {
 		return blockX > 0 && !board.IsOccupied(blockX-1, blockY)
 	})
 }
 
 func (t *Tetrimino) CanMoveRight(game *Game) bool {
 	board := &game.State.Board
-	position := &t.Position
 
-	return t.DoToBlocks(game, func(game *Game, x, y int) bool {
-		blockX := position.X + x
-		blockY := position.Y + y
-
+	return t.DoToBlocks(game, func(game *Game, x, y, blockX, blockY int) bool {
 		return blockX < BoardWidth-1 && !board.IsOccupied(blockX+1, blockY)
 	})
 }
 
 func (t *Tetrimino) CanMoveDown(game *Game) bool {
 	board := &game.State.Board
-	position := &t.Position
 
-	return t.DoToBlocks(game, func(game *Game, x, y int) bool {
-		blockX := position.X + x
-		blockY := position.Y + y
-
+	return t.DoToBlocks(game, func(game *Game, x, y, blockX, blockY int) bool {
 		return blockY < BoardHeight && !board.IsOccupied(blockX, blockY)
 	})
 }

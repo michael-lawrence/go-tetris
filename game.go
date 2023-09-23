@@ -13,13 +13,10 @@ type Game struct {
 
 func (game *Game) PlaceTetrimino() {
 	tetrimino := &game.State.Tetrimino
-	position := &tetrimino.Position
 	board := &game.State.Board
 
-	tetrimino.DoToBlocks(game, func(game *Game, x, y int) bool {
-		blockX := x + position.X
-		blockY := y + position.Y - 1
-		board[blockX][blockY] = true
+	tetrimino.DoToBlocks(game, func(game *Game, x, y, blockX, blockY int) bool {
+		board[blockX][blockY-1] = true
 		return true
 	})
 }
@@ -52,18 +49,12 @@ func (game *Game) Update() error {
 func (game *Game) DrawTetrimino(screen *ebiten.Image) {
 	graphic := game.Graphics.Blue
 	tetrimino := &game.State.Tetrimino
-	position := tetrimino.Position
 	size := graphic.Bounds().Size()
 	w := size.X
 	h := size.Y
-	x := float64(position.X * w)
-	y := float64(position.Y * h)
 
-	tetrimino.DoToBlocks(game, func(game *Game, i, j int) bool {
-		blockX := x + float64(i*w)
-		blockY := y + float64(j*h)
-
-		DrawImageAt(&graphic, screen, blockX, blockY)
+	tetrimino.DoToBlocks(game, func(game *Game, x, y, blockX, blockY int) bool {
+		DrawImageAt(&graphic, screen, float64(blockX*w), float64(blockY*h))
 
 		return true
 	})
