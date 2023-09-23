@@ -42,6 +42,12 @@ func (t *Tetrimino) Down() {
 	t.Position.Y++
 }
 
+func (t *Tetrimino) Drop(game *Game) {
+	for t.CanMoveDown(game) {
+		t.Down()
+	}
+}
+
 func (t *Tetrimino) IsOccupied(x, y int) bool {
 	shape := t.GetCurrentShape()
 	return shape[x][y] == 1
@@ -93,6 +99,15 @@ func (t *Tetrimino) CanMoveDown(game *Game) bool {
 	board := &game.State.Board
 
 	return t.DoToBlocks(game, func(game *Game, x, y, blockX, blockY int) bool {
-		return blockY < BoardHeight && !board.IsOccupied(blockX, blockY)
+		return blockY < BoardHeight-1 && !board.IsOccupied(blockX, blockY+1)
+	})
+}
+
+// CanRotate @todo Implement this
+func (t *Tetrimino) CanRotate(game *Game) bool {
+	//board := &game.State.Board
+
+	return t.DoToBlocks(game, func(game *Game, x, y, blockX, blockY int) bool {
+		return true
 	})
 }

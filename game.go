@@ -16,27 +16,32 @@ func (game *Game) PlaceTetrimino() {
 	board := &game.State.Board
 
 	tetrimino.DoToBlocks(game, func(game *Game, x, y, blockX, blockY int) bool {
-		board[blockX][blockY-1] = true
+		board[blockX][blockY] = true
 		return true
 	})
 }
 
-func (game *Game) Update() error {
+func (game *Game) HandleKeyboard() {
 	tetrimino := &game.State.Tetrimino
 
 	if ebiten.IsKeyPressed(ebiten.KeyLeft) && tetrimino.CanMoveLeft(game) {
 		tetrimino.Left()
 	} else if ebiten.IsKeyPressed(ebiten.KeyRight) && tetrimino.CanMoveRight(game) {
 		tetrimino.Right()
-	} else if ebiten.IsKeyPressed(ebiten.KeySpace) {
+	} else if ebiten.IsKeyPressed(ebiten.KeySpace) && tetrimino.CanRotate(game) {
 		tetrimino.Rotate()
 	} else if ebiten.IsKeyPressed(ebiten.KeyDown) && tetrimino.CanMoveDown(game) {
 		tetrimino.Down()
 	} else if ebiten.IsKeyPressed(ebiten.KeyUp) {
-		// @todo Instant drop
+		tetrimino.Drop(game)
 	}
+}
+
+func (game *Game) Update() error {
+	tetrimino := &game.State.Tetrimino
 
 	tetrimino.Down()
+	game.HandleKeyboard()
 
 	if !tetrimino.CanMoveDown(game) {
 		game.PlaceTetrimino()
