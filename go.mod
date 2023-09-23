@@ -1,4 +1,4 @@
-module tetris
+module github.com/michael-lawrence/go-tetris
 
 go 1.21
 
