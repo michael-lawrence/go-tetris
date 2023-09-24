@@ -28,11 +28,11 @@ func (game *Game) HandleKeyboard() {
 		tetrimino.Left()
 	} else if ebiten.IsKeyPressed(ebiten.KeyRight) && tetrimino.CanMoveRight(game) {
 		tetrimino.Right()
-	} else if inpututil.IsKeyJustPressed(ebiten.KeySpace) && tetrimino.CanRotate(game) {
+	} else if inpututil.IsKeyJustPressed(ebiten.KeyUp) && tetrimino.CanRotate(game) {
 		tetrimino.Rotate()
 	} else if ebiten.IsKeyPressed(ebiten.KeyDown) && tetrimino.CanMoveDown(game) {
 		tetrimino.Down()
-	} else if inpututil.IsKeyJustPressed(ebiten.KeyUp) {
+	} else if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
 		tetrimino.Drop(game)
 	}
 }
