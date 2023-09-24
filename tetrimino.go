@@ -1,13 +1,12 @@
 package main
 
 import (
-	"image"
 	"math/rand"
 )
 
 type Tetrimino struct {
 	Shape    ShapeRotations
-	Position image.Point
+	Position Point
 	Rotation byte
 }
 
@@ -48,27 +47,37 @@ func (t *Tetrimino) Drop(game *Game) {
 	}
 }
 
-func (t *Tetrimino) IsOccupied(x, y int) bool {
+func (t *Tetrimino) Get(position Point) byte {
 	shape := t.GetCurrentShape()
-	return shape[x][y] == 1
+	return shape[int(position.X)][int(position.Y)]
 }
 
-type blockFn func(game *Game, x, y, blockX, blockY int) bool
+func (t *Tetrimino) Set(position Point, value byte) byte {
+	shape := t.GetCurrentShape()
+	shape[int(position.X)][int(position.Y)] = value
+	return value
+}
+
+func (t *Tetrimino) IsOccupied(position Point) bool {
+	return t.Get(position) == 1
+}
+
+type blockFn func(game *Game, position, blockPosition Point) bool
 
 func (t *Tetrimino) DoToBlocks(game *Game, fn blockFn) bool {
 	ok := true
 	position := &t.Position
 
-	for x := 0; x < ShapeWidth; x++ {
-		for y := 0; y < ShapeHeight; y++ {
-			if !t.IsOccupied(x, y) {
+	for i := 0; i < ShapeWidth; i++ {
+		for j := 0; j < ShapeHeight; j++ {
+			pos := NewPoint(i, j)
+			blockPos := pos.AddPoint(position)
+
+			if !t.IsOccupied(pos) {
 				continue
 			}
 
-			blockX := x + position.X
-			blockY := y + position.Y
-
-			result := fn(game, x, y, blockX, blockY)
+			result := fn(game, pos, blockPos)
 
 			if !result {
 				ok = false
@@ -82,24 +91,24 @@ func (t *Tetrimino) DoToBlocks(game *Game, fn blockFn) bool {
 func (t *Tetrimino) CanMoveLeft(game *Game) bool {
 	board := &game.State.Board
 
-	return t.DoToBlocks(game, func(game *Game, x, y, blockX, blockY int) bool {
-		return blockX > 0 && !board.IsOccupied(blockX-1, blockY)
+	return t.DoToBlocks(game, func(game *Game, position, blockPosition Point) bool {
+		return blockPosition.X > 0 && !board.Get(blockPosition.Subtract(1, 0))
 	})
 }
 
 func (t *Tetrimino) CanMoveRight(game *Game) bool {
 	board := &game.State.Board
 
-	return t.DoToBlocks(game, func(game *Game, x, y, blockX, blockY int) bool {
-		return blockX < BoardWidth-1 && !board.IsOccupied(blockX+1, blockY)
+	return t.DoToBlocks(game, func(game *Game, position, blockPosition Point) bool {
+		return blockPosition.X < BoardWidth-1 && !board.Get(blockPosition.Add(1, 0))
 	})
 }
 
 func (t *Tetrimino) CanMoveDown(game *Game) bool {
 	board := &game.State.Board
 
-	return t.DoToBlocks(game, func(game *Game, x, y, blockX, blockY int) bool {
-		return blockY < BoardHeight-1 && !board.IsOccupied(blockX, blockY+1)
+	return t.DoToBlocks(game, func(game *Game, position, blockPosition Point) bool {
+		return blockPosition.Y < BoardHeight-1 && !board.Get(blockPosition.Add(0, 1))
 	})
 }
 
@@ -107,7 +116,7 @@ func (t *Tetrimino) CanMoveDown(game *Game) bool {
 func (t *Tetrimino) CanRotate(game *Game) bool {
 	//board := &game.State.Board
 
-	return t.DoToBlocks(game, func(game *Game, x, y, blockX, blockY int) bool {
+	return t.DoToBlocks(game, func(game *Game, position, blockPosition Point) bool {
 		return true
 	})
 }

@@ -15,9 +15,8 @@ func (game *Game) PlaceTetrimino() {
 	tetrimino := &game.State.Tetrimino
 	board := &game.State.Board
 
-	tetrimino.DoToBlocks(game, func(game *Game, x, y, blockX, blockY int) bool {
-		board[blockX][blockY] = true
-		return true
+	tetrimino.DoToBlocks(game, func(game *Game, position, blockPosition Point) bool {
+		return board.Set(blockPosition, true)
 	})
 }
 
@@ -37,8 +36,17 @@ func (game *Game) HandleKeyboard() {
 	}
 }
 
+// GameOver @todo Make game over screen
+func (game *Game) GameOver() {
+	game.State.Board = Board{}
+}
+
 func (game *Game) Update() error {
 	tetrimino := &game.State.Tetrimino
+
+	if !tetrimino.CanMoveDown(game) {
+		game.GameOver()
+	}
 
 	tetrimino.Down()
 	game.HandleKeyboard()
@@ -54,12 +62,11 @@ func (game *Game) Update() error {
 func (game *Game) DrawTetrimino(screen *ebiten.Image) {
 	graphic := game.Graphics.Blue
 	tetrimino := &game.State.Tetrimino
-	size := graphic.Bounds().Size()
-	w := size.X
-	h := size.Y
+	blockSize := FromImagePoint(graphic.Bounds().Size())
 
-	tetrimino.DoToBlocks(game, func(game *Game, x, y, blockX, blockY int) bool {
-		DrawImageAt(&graphic, screen, float64(blockX*w), float64(blockY*h))
+	tetrimino.DoToBlocks(game, func(game *Game, position, blockPosition Point) bool {
+		currentBlockPosition := blockPosition.MultiplyPoint(&blockSize)
+		DrawImageAt(&graphic, screen, currentBlockPosition)
 
 		return true
 	})
@@ -69,11 +76,10 @@ func (game *Game) DrawBoard(screen *ebiten.Image) {
 	board := &game.State.Board
 	blank := &game.Graphics.Blank
 	red := &game.Graphics.Red
-	blockSize := blank.Bounds().Size()
+	blockSize := FromImagePoint(blank.Bounds().Size())
 
-	board.DoToBoard(game, func(game *Game, x, y int, occupied bool) bool {
-		xPos := float64(x * blockSize.X)
-		yPos := float64(y * blockSize.Y)
+	board.DoToBoard(game, func(game *Game, position Point, occupied bool) bool {
+		currentBlockPosition := blockSize.MultiplyPoint(&position)
 
 		var graphic *ebiten.Image
 
@@ -83,15 +89,15 @@ func (game *Game) DrawBoard(screen *ebiten.Image) {
 			graphic = blank
 		}
 
-		DrawImageAt(graphic, screen, xPos, yPos)
+		DrawImageAt(graphic, screen, currentBlockPosition)
 
 		return true
 	})
 }
 
-func DrawImageAt(source *ebiten.Image, dest *ebiten.Image, x, y float64) {
+func DrawImageAt(source *ebiten.Image, dest *ebiten.Image, position Point) {
 	options := &ebiten.DrawImageOptions{}
-	options.GeoM.Translate(x, y)
+	options.GeoM.Translate(position.X, position.Y)
 	dest.DrawImage(source, options)
 }
 

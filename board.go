@@ -7,10 +7,15 @@ const (
 
 type Board [BoardWidth][BoardHeight]bool
 
-type boardFn func(game *Game, x, y int, occupied bool) bool
+type boardFn func(game *Game, position Point, occupied bool) bool
 
-func (b *Board) IsOccupied(x, y int) bool {
-	return b[x][y]
+func (b *Board) Set(position Point, value bool) bool {
+	b[int(position.X)][int(position.Y)] = value
+	return value
+}
+
+func (b *Board) Get(position Point) bool {
+	return b[int(position.X)][int(position.Y)]
 }
 
 func (b *Board) DoToBoard(game *Game, fn boardFn) bool {
@@ -18,7 +23,8 @@ func (b *Board) DoToBoard(game *Game, fn boardFn) bool {
 
 	for x := 0; x < BoardWidth; x++ {
 		for y := 0; y < BoardHeight; y++ {
-			ok = ok && fn(game, x, y, b.IsOccupied(x, y))
+			position := NewPoint(x, y)
+			ok = ok && fn(game, position, b.Get(position))
 		}
 	}
 
