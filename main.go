@@ -26,7 +26,7 @@ func main() {
 	ebiten.SetWindowSize(game.WindowSize.X, game.WindowSize.Y)
 	ebiten.SetWindowTitle("Tetris")
 	ebiten.SetScreenClearedEveryFrame(true)
-	ebiten.SetTPS(5)
+	ebiten.SetTPS(60)
 
 	if err := ebiten.RunGame(game); err != nil {
 		panic(err)

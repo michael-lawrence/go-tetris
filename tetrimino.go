@@ -1,8 +1,12 @@
 package main
 
 import (
+	"github.com/yudppp/throttle"
 	"math/rand"
+	"time"
 )
+
+var inputThrottler = throttle.New(time.Second / 10)
 
 type Tetrimino struct {
 	Shape    ShapeRotations
@@ -30,15 +34,19 @@ func (t *Tetrimino) Rotate() {
 }
 
 func (t *Tetrimino) Left() {
-	t.Position.X--
+	inputThrottler.Do(func() {
+		t.Position.X--
+	})
 }
 
 func (t *Tetrimino) Right() {
-	t.Position.X++
+	inputThrottler.Do(func() {
+		t.Position.X++
+	})
 }
 
 func (t *Tetrimino) Down() {
-	t.Position.Y++
+	t.Position.Y += 0.1
 }
 
 func (t *Tetrimino) Drop(game *Game) {

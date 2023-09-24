@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"image"
 )
 
@@ -27,11 +28,11 @@ func (game *Game) HandleKeyboard() {
 		tetrimino.Left()
 	} else if ebiten.IsKeyPressed(ebiten.KeyRight) && tetrimino.CanMoveRight(game) {
 		tetrimino.Right()
-	} else if ebiten.IsKeyPressed(ebiten.KeySpace) && tetrimino.CanRotate(game) {
+	} else if inpututil.IsKeyJustPressed(ebiten.KeySpace) && tetrimino.CanRotate(game) {
 		tetrimino.Rotate()
 	} else if ebiten.IsKeyPressed(ebiten.KeyDown) && tetrimino.CanMoveDown(game) {
 		tetrimino.Down()
-	} else if ebiten.IsKeyPressed(ebiten.KeyUp) {
+	} else if inpututil.IsKeyJustPressed(ebiten.KeyUp) {
 		tetrimino.Drop(game)
 	}
 }
