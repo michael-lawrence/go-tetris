@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/yudppp/throttle"
 	"image"
 	"time"
@@ -14,6 +13,7 @@ type Game struct {
 	WindowSize image.Point
 	State      State
 	Graphics   Graphics
+	Keyboard   Keyboard
 }
 
 func (game *Game) PlaceTetrimino() {
@@ -25,26 +25,6 @@ func (game *Game) PlaceTetrimino() {
 	})
 }
 
-func (game *Game) HandleKeyboard() {
-	tetrimino := &game.State.Tetrimino
-
-	if ebiten.IsKeyPressed(ebiten.KeyLeft) && tetrimino.CanMoveLeft(game) {
-		inputThrottler.Do(func() {
-			tetrimino.Left()
-		})
-	} else if ebiten.IsKeyPressed(ebiten.KeyRight) && tetrimino.CanMoveRight(game) {
-		inputThrottler.Do(func() {
-			tetrimino.Right()
-		})
-	} else if inpututil.IsKeyJustPressed(ebiten.KeyUp) && tetrimino.CanRotate(game) {
-		tetrimino.Rotate()
-	} else if ebiten.IsKeyPressed(ebiten.KeyDown) && tetrimino.CanMoveDown(game) {
-		tetrimino.Down()
-	} else if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
-		tetrimino.Drop(game)
-	}
-}
-
 // GameOver @todo Make game over screen
 func (game *Game) GameOver() {
 	game.State.Board = Board{}
@@ -52,13 +32,14 @@ func (game *Game) GameOver() {
 
 func (game *Game) Update() error {
 	tetrimino := &game.State.Tetrimino
+	keyboard := &game.Keyboard
 
 	if !tetrimino.CanMoveDown(game) {
 		game.GameOver()
 	}
 
 	tetrimino.Down()
-	game.HandleKeyboard()
+	keyboard.Process(game)
 
 	if !tetrimino.CanMoveDown(game) {
 		game.PlaceTetrimino()

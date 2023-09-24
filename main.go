@@ -19,6 +19,13 @@ var (
 			Board: Board{},
 		},
 		Graphics: *NewGraphics(),
+		Keyboard: Keyboard{
+			Left:   ebiten.KeyLeft,
+			Right:  ebiten.KeyRight,
+			Down:   ebiten.KeyDown,
+			Rotate: ebiten.KeyUp,
+			Drop:   ebiten.KeySpace,
+		},
 	}
 )
 
