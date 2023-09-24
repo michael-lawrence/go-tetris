@@ -18,7 +18,7 @@ func (b *Board) Get(position Point) bool {
 	return b[int(position.X)][int(position.Y)]
 }
 
-func (b *Board) DoToBoard(game *Game, fn boardFn) bool {
+func (b *Board) Do(game *Game, fn boardFn) bool {
 	ok := true
 
 	for x := 0; x < BoardWidth; x++ {
