@@ -3,8 +3,12 @@ package main
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	"github.com/yudppp/throttle"
 	"image"
+	"time"
 )
+
+var inputThrottler = throttle.New(time.Second / 10)
 
 type Game struct {
 	WindowSize image.Point
@@ -25,9 +29,13 @@ func (game *Game) HandleKeyboard() {
 	tetrimino := &game.State.Tetrimino
 
 	if ebiten.IsKeyPressed(ebiten.KeyLeft) && tetrimino.CanMoveLeft(game) {
-		tetrimino.Left()
+		inputThrottler.Do(func() {
+			tetrimino.Left()
+		})
 	} else if ebiten.IsKeyPressed(ebiten.KeyRight) && tetrimino.CanMoveRight(game) {
-		tetrimino.Right()
+		inputThrottler.Do(func() {
+			tetrimino.Right()
+		})
 	} else if inpututil.IsKeyJustPressed(ebiten.KeyUp) && tetrimino.CanRotate(game) {
 		tetrimino.Rotate()
 	} else if ebiten.IsKeyPressed(ebiten.KeyDown) && tetrimino.CanMoveDown(game) {
