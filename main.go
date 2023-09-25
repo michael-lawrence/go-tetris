@@ -14,7 +14,6 @@ var (
 			Tetrimino: Tetrimino{
 				Shape:    Shapes[0],
 				Position: Point{X: 0, Y: 0},
-				Rotation: 0,
 			},
 			Board: Board{},
 		},

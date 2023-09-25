@@ -5,28 +5,22 @@ import (
 )
 
 type Tetrimino struct {
-	Shape    ShapeRotations
+	Shape    Shape
 	Position Point
-	Rotation byte
 }
 
 func (t *Tetrimino) GetCurrentShape() *Shape {
-	return &t.Shape[t.Rotation]
+	return &t.Shape
 }
 
 func (t *Tetrimino) Reset() {
 	t.Position.X = 0
 	t.Position.Y = 0
-	t.Rotation = 0
 	t.Shape = Shapes[rand.Intn(len(Shapes))]
 }
 
 func (t *Tetrimino) Rotate() {
-	t.Rotation++
-
-	if t.Rotation > ShapeRotationCount-1 {
-		t.Rotation = 0
-	}
+	t.Shape.Rotate()
 }
 
 func (t *Tetrimino) Left() {
