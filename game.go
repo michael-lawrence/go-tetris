@@ -20,7 +20,7 @@ func (game *Game) PlaceTetrimino() {
 	board := &game.State.Board
 
 	tetrimino.Do(game, func(game *Game, position, blockPosition Point) bool {
-		return board.Set(blockPosition, true)
+		return board.Set(blockPosition, tetrimino.ShapeNum+1) > 0
 	})
 }
 
@@ -63,20 +63,11 @@ func (game *Game) DrawTetrimino(screen *ebiten.Image) {
 
 func (game *Game) DrawBoard(screen *ebiten.Image) {
 	board := &game.State.Board
-	blank := &Colors[0]
-	red := &Colors[1]
-	blockSize := FromImagePoint(blank.Bounds().Size())
 
 	board.Do(game, func(game *Game, position Point, occupied bool) bool {
+		graphic := &Colors[board.Get(position)]
+		blockSize := FromImagePoint(graphic.Bounds().Size())
 		currentBlockPosition := blockSize.MultiplyPoint(&position)
-
-		var graphic *ebiten.Image
-
-		if occupied {
-			graphic = red
-		} else {
-			graphic = blank
-		}
 
 		DrawImageAt(graphic, screen, currentBlockPosition)
 
