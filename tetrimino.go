@@ -1,22 +1,29 @@
 package main
 
 import (
+	"github.com/hajimehoshi/ebiten/v2"
 	"math/rand"
 )
 
 type Tetrimino struct {
-	Shape    Shape
 	Position Point
+	ShapeNum int
+	Shape    Shape
 }
 
 func (t *Tetrimino) GetCurrentShape() *Shape {
 	return &t.Shape
 }
 
-func (t *Tetrimino) Reset() {
+func (t *Tetrimino) GetCurrentGraphic() *ebiten.Image {
+	return &Colors[t.ShapeNum+1]
+}
+
+func (t *Tetrimino) Reset(game *Game) {
+	t.ShapeNum = rand.Intn(len(Shapes))
+	t.Shape = Shapes[t.ShapeNum]
 	t.Position.X = 0
 	t.Position.Y = 0
-	t.Shape = Shapes[rand.Intn(len(Shapes))]
 }
 
 func (t *Tetrimino) Rotate() {

@@ -1,9 +1,8 @@
 package main
 
 const (
-	ShapeWidth         = 4
-	ShapeHeight        = 4
-	ShapeRotationCount = 4
+	ShapeWidth  = 4
+	ShapeHeight = 4
 )
 
 type Shape [ShapeWidth][ShapeHeight]byte

@@ -12,7 +12,6 @@ var inputThrottler = throttle.New(time.Second / 10)
 type Game struct {
 	WindowSize image.Point
 	State      State
-	Graphics   Graphics
 	Keyboard   Keyboard
 }
 
@@ -43,20 +42,20 @@ func (game *Game) Update() error {
 
 	if !tetrimino.CanMoveDown(game) {
 		game.PlaceTetrimino()
-		tetrimino.Reset()
+		tetrimino.Reset(game)
 	}
 
 	return nil
 }
 
 func (game *Game) DrawTetrimino(screen *ebiten.Image) {
-	graphic := game.Graphics.Blue
 	tetrimino := &game.State.Tetrimino
+	graphic := tetrimino.GetCurrentGraphic()
 	blockSize := FromImagePoint(graphic.Bounds().Size())
 
 	tetrimino.Do(game, func(game *Game, position, blockPosition Point) bool {
 		currentBlockPosition := blockPosition.MultiplyPoint(&blockSize)
-		DrawImageAt(&graphic, screen, currentBlockPosition)
+		DrawImageAt(graphic, screen, currentBlockPosition)
 
 		return true
 	})
@@ -64,8 +63,8 @@ func (game *Game) DrawTetrimino(screen *ebiten.Image) {
 
 func (game *Game) DrawBoard(screen *ebiten.Image) {
 	board := &game.State.Board
-	blank := &game.Graphics.Blank
-	red := &game.Graphics.Red
+	blank := &Colors[0]
+	red := &Colors[1]
 	blockSize := FromImagePoint(blank.Bounds().Size())
 
 	board.Do(game, func(game *Game, position Point, occupied bool) bool {

@@ -12,12 +12,12 @@ var (
 		WindowSize: image.Point{X: 400, Y: 800},
 		State: State{
 			Tetrimino: Tetrimino{
+				ShapeNum: 0,
 				Shape:    Shapes[0],
 				Position: Point{X: 0, Y: 0},
 			},
 			Board: Board{},
 		},
-		Graphics: *NewGraphics(),
 		Keyboard: Keyboard{
 			Left:   ebiten.KeyLeft,
 			Right:  ebiten.KeyRight,
